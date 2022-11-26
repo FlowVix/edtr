@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "edtr-tauri/src-tauri",
+    "edtr-view",
+    "edtr-log",
+]
+resolver = "2"

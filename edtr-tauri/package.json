@@ -1,0 +1,16 @@
+{
+	"name": "edtr-tauri",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"tauri": "tauri"
+	},
+	"dependencies": {
+		"@tauri-apps/api": "^1.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "^18.7.10",
+		"@tauri-apps/cli": "^1.1.0"
+	}
+}

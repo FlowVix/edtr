@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+   <key>APFiles</key>
+   <array>
+        <dict>
+            <key>APFileDestinationPath</key>
+            <string>~/Library/Application Support/${PRODUCT_NAME}/</string>
+            <key>APFileSourcePath</key>
+            <string>./plugins</string>
+            <key>APInstallAction</key>
+            <string>Open</string>
+            <key>APFileName</key>
+            <string>plugins</string>
+
+            <key>APFiles</key>
+            <dict>
+                <key>APFileDestinationPath</key>
+                <string>config</string>
+                <key>APInstallAction</key>
+                <string>Open</string>
+                <key>APFileName</key>
+                <string>config</string>
+            </dict>
+        </dict>
+   </array>
+</dict>
+</plist>

@@ -1,0 +1,45 @@
+[package]
+name = "edtr-tauri"
+version = "0.1.0"
+authors = ["@DexterHill0", "@FlowVix ", "@Spu7Nix"]
+description = "Cross platform Tauri backend."
+repository = "https://github.com/FlowVix/EDTR"
+license = "MIT"
+edition = "2021"
+rust-version = "1.57"
+
+[build-dependencies]
+tauri-build = { version = "1.0.0", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+tauri = { version = "1.0.0", features = ["api-all", "macos-private-api"] }
+
+window-shadows = "0.2.0"
+window-vibrancy = "0.3.0"
+
+log = "0.4.17"
+time = { version = "0.3", features = ["formatting"] }
+app_dirs2 = "2.5.4"
+clap = { version = "4.0.10", features = ["derive"] }
+tokio = { version = "1.21.2", features = ["macros"] }
+edtr-log = { version = "0.1.0", path = "../../edtr-log" }
+ahash = { version = "0.8.0", features = ["serde"] }
+
+[dependencies.tauri-plugin-log]
+git = "https://github.com/tauri-apps/tauri-plugin-log"
+branch = "dev"
+features = ["colored"] 
+
+[dependencies.uuid]
+version = "1.2.1"
+features = ["v4", "fast-rng", "macro-diagnostics", "serde"]
+
+[dependencies.ts-rs]
+git = "https://github.com/Aleph-Alpha/ts-rs.git"
+features = ["uuid-impl"]
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

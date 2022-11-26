@@ -1,0 +1,90 @@
+{
+	"build": {
+		"beforeDevCommand": "",
+		"beforeBuildCommand": "",
+		"devPath": "http://localhost:8080",
+		"distDir": "../../edtr-ui/dist",
+		"withGlobalTauri": false
+	},
+	"package": {
+		"productName": "EDTR",
+		"version": "0.1.0"
+	},
+	"tauri": {
+		"allowlist": {
+			"all": true
+		},
+		"bundle": {
+			"active": true,
+			"category": "DeveloperTool",
+			"copyright": "2022",
+			"deb": {
+				"depends": []
+			},
+			"externalBin": [],
+			"icon": [
+				"icons/32x32.png",
+				"icons/128x128.png",
+				"icons/128x128@2x.png",
+				"icons/icon.icns",
+				"icons/icon.ico"
+			],
+			"identifier": "com.edtr.edtr",
+			"longDescription": "",
+			"macOS": {
+				"entitlements": null,
+				"exceptionDomain": "",
+				"frameworks": [],
+				"providerShortName": null,
+				"signingIdentity": null
+			},
+			"shortDescription": "",
+			"targets": "all",
+			"windows": {
+				"certificateThumbprint": null,
+				"digestAlgorithm": "sha256",
+				"timestampUrl": "",
+				"wix": {
+					"fragmentPaths": ["./windows.wxs"],
+					"componentRefs": ["edtr-theme"]
+				}
+			}
+		},
+		"security": {
+			"csp": "default-src 'self'"
+		},
+		"updater": {
+			"active": false
+		},
+		"windows": [
+			{
+				"title": "EDTR",
+				"url": "edtr",
+				"label": "edtr",
+				"fullscreen": false,
+				"resizable": true,
+				"maximized": false,
+				"visible": false,
+				"transparent": true,
+				"decorations": false,
+				"focus": false,
+				"minHeight": 700,
+				"minWidth": 1000
+			},
+			{
+				"url": "splash",
+				"label": "splash",
+				"decorations": false,
+				"resizable": false,
+				"center": true,
+				"transparent": true,
+				"fileDropEnabled": false,
+				"focus": true,
+				"width": 400,
+				"height": 500,
+				"visible": true
+			}
+		],
+		"macOSPrivateApi": true
+	}
+}
