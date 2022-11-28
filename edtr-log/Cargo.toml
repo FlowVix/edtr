@@ -3,7 +3,7 @@ name = "edtr-log"
 version = "0.1.0"
 authors = ["@DexterHill0", "@FlowVix ", "@Spu7Nix"]
 edition = "2021"
-description = "Crate used to customise the logger. Used in `edtr-view` as well as `edtr`."
+description = "Crate used to customise the logger. Designed to work on both the target architecture, as well as wasm."
 repository = "https://github.com/FlowVix/EDTR"
 license = "MIT"
 
