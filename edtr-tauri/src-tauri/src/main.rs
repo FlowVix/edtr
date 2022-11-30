@@ -153,16 +153,16 @@ async fn setup(app: Arc<AppHandle>) {
     //     }
     // });
 
-    // load_config(Arc::clone(&app)).await;
+    load_config(Arc::clone(&app)).await;
 
-    // load_plugins(Arc::clone(&app)).await;
+    load_plugins(Arc::clone(&app)).await;
 
-    // load_theme(Arc::clone(&app)).await;
+    load_theme(Arc::clone(&app)).await;
 
-    // println!(
-    //     "current theme: {:?}",
-    //     app.state::<plugins::theme::EDTRTheme>()
-    // );
+    println!(
+        "current theme: {:?}",
+        app.state::<plugins::theme::EDTRTheme>()
+    );
 
     app.get_window("splash")
         .unwrap()

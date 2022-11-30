@@ -29,7 +29,7 @@ pub fn plugins_folder() -> PathBuf {
     });
 
     #[cfg(debug_assertions)]
-    return "../plugins/".into();
+    return "./plugins/".into();
 }
 
 #[derive(Serialize, Deserialize, Debug, TS)]
@@ -74,8 +74,9 @@ pub struct PluginConfig {
 
     uuid: Uuid,
 
-    #[serde(rename = "type")]
-    ptype: PluginType,
+    //#[serde(rename = "type")]
+    #[serde(flatten)]
+    r#type: PluginType,
 
     #[serde(skip)]
     pub path: PathBuf,

@@ -1,0 +1,12 @@
+{
+    "name": "EDTR Theme",
+    "uuid": "0e0d0f0d-0700-0d09-0e0a-0b0a05050c02",
+    "description": "Default EDTR themes",
+    "version": "0.1.0",
+    "author": "",
+    "repository": "https://github.com/FlowVix/EDTR",
+    "type": "theme",
+    "themes": {
+        "edtr-dark": "./edtr-dark.json"
+    }
+}

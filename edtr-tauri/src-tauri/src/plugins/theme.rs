@@ -1,9 +1,10 @@
+use std::collections::HashMap;
 use std::{fs, path::PathBuf, sync::Arc};
 
 use ahash::AHashMap;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tauri::{AppHandle, Manager};
+use ts_rs::TS;
 use uuid::Uuid;
 
 use crate::config::EDTRConfig;
@@ -21,28 +22,32 @@ pub fn theme_name() -> String {
     "edtr-dark".into()
 }
 
+// map of the theme name to theme version json file
 pub type ThemeVersions = HashMap<String, PathBuf>;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, TS)]
 #[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
+#[serde(tag = "type")]
 enum ThemeType {
     Light,
     Dark,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, TS)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
 pub struct ThemeColours {
     primary_dark: String,
 }
 
 // loaded using the data from the selected theme (`Theme` struct)
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, TS)]
 pub struct EDTRTheme {
     name: String,
 
-    #[serde(rename = "type")]
-    ttype: ThemeType,
+    #[serde(flatten)]
+    // serde `rename` does not work with serde `flatten` inside ts-rs
+    // so r# is used instead of renaming the field
+    r#type: ThemeType,
     colours: ThemeColours,
 }
 
@@ -56,8 +61,7 @@ fn get_default_theme(plugins: &EDTRPlugins) -> EDTRTheme {
         .unwrap_or_else(|| edtr_log::fatal!("builtin EDTR theme has incorrect UUID!"));
 
     #[allow(irrefutable_let_patterns)]
-    let theme = if let PluginType::Theme { ref themes } = default_theme.ptype {
-        // builtin edtr theme always exists
+    let theme = if let PluginType::Theme { ref themes } = default_theme.r#type {
         themes.get(&theme_name()).unwrap_or_else(|| {
             edtr_log::fatal!("builtin EDTR theme has missing/incorrect variant!")
         })
@@ -97,7 +101,7 @@ pub async fn load_theme(app: Arc<AppHandle>) {
 
     // TODO: if we fallback to default theme, is getting and managing better than handling every error?
 
-    let theme = match theme_cfg.ptype {
+    let theme = match theme_cfg.r#type {
         PluginType::Theme { ref themes } => match themes.get(&app_cfg.theme_ver) {
             Some(t) => t,
             None => {
