@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 use std::{fs, path::PathBuf, sync::Arc};
 
-use ahash::AHashMap;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 use ts_rs::TS;
 use uuid::Uuid;
 
 use crate::config::EDTRConfig;
+use crate::{export_keys, js_manage};
 
 use super::{EDTRPlugins, PluginType};
 
@@ -22,12 +22,9 @@ pub fn theme_name() -> String {
     "edtr-dark".into()
 }
 
-// map of the theme name to theme version json file
-pub type ThemeVersions = HashMap<String, PathBuf>;
-
 #[derive(Serialize, Deserialize, Debug, TS)]
 #[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
-#[serde(tag = "type")]
+#[ts(export, export_to = "../bindings/", rename_all = "lowercase")]
 enum ThemeType {
     Light,
     Dark,
@@ -35,24 +32,24 @@ enum ThemeType {
 
 #[derive(Serialize, Deserialize, Debug, TS)]
 #[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
+#[ts(export, export_to = "../bindings/", rename_all = "camelCase")]
 pub struct ThemeColours {
     primary_dark: String,
 }
+export_keys!(super::ThemeColours, "../bindings/ThemeColours.json");
 
 // loaded using the data from the selected theme (`Theme` struct)
 #[derive(Serialize, Deserialize, Debug, TS)]
+#[ts(export, export_to = "../bindings/")]
 pub struct EDTRTheme {
     name: String,
 
-    #[serde(flatten)]
-    // serde `rename` does not work with serde `flatten` inside ts-rs
-    // so r# is used instead of renaming the field
     r#type: ThemeType,
     colours: ThemeColours,
 }
+js_manage!(crate::plugins::theme::EDTRTheme);
 
 // this shouldnt ever fail as the builtin themes are guaranted to exist and be correct
-// but thats assuming no one has modified them
 fn get_default_theme(plugins: &EDTRPlugins) -> EDTRTheme {
     edtr_log::warn!("loading default EDTR theme due to previous error!");
 
@@ -62,9 +59,9 @@ fn get_default_theme(plugins: &EDTRPlugins) -> EDTRTheme {
 
     #[allow(irrefutable_let_patterns)]
     let theme = if let PluginType::Theme { ref themes } = default_theme.r#type {
-        themes.get(&theme_name()).unwrap_or_else(|| {
-            edtr_log::fatal!("builtin EDTR theme has missing/incorrect variant!")
-        })
+        themes
+            .get(&theme_name())
+            .unwrap_or_else(|| edtr_log::fatal!("builtin EDTR theme has incorrect variant!"))
     } else {
         edtr_log::fatal!("builtin EDTR theme does not have `\"type\":\"theme\"`!");
     };
@@ -125,7 +122,7 @@ pub async fn load_theme(app: Arc<AppHandle>) {
     let bytes = match fs::read(theme_path) {
         Ok(b) => b,
         Err(e) => {
-            edtr_log::error!("theme variation ({theme:?}) does not exist!");
+            edtr_log::error!("theme variation `{theme:?}` does not exist! ({e})");
 
             app.manage(get_default_theme(&plugins));
             return;
@@ -135,7 +132,10 @@ pub async fn load_theme(app: Arc<AppHandle>) {
     let edtr_theme: EDTRTheme = match serde_json::from_slice(&bytes) {
         Ok(t) => t,
         Err(e) => {
-            edtr_log::error!("failed to theme definition for `{}` ({e})", theme_cfg.name);
+            edtr_log::error!(
+                "failed to parse theme definition for `{}` ({e})",
+                theme_cfg.name
+            );
 
             app.manage(get_default_theme(&plugins));
             return;

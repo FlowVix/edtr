@@ -8,12 +8,12 @@ use uuid::{self, Uuid};
 
 use super::plugins::theme::{theme_name, theme_uuid};
 
-use crate::APP_INFO;
+use crate::{js_manage, APP_INFO};
 
 pub const CONFIG_NAME: &str = "config.json";
 
 #[derive(Serialize, Deserialize, Debug, TS)]
-#[ts(export, export_to = "../pkg/")]
+#[ts(export, export_to = "../bindings/")]
 pub struct EDTRConfig {
     #[serde(rename = "disabledPlugins", default = "Default::default")]
     pub disabled_plugins: Vec<Uuid>,
@@ -21,6 +21,7 @@ pub struct EDTRConfig {
     pub theme_uuid: Uuid,
     pub theme_ver: String,
 }
+js_manage!(crate::config::EDTRConfig);
 
 impl Default for EDTRConfig {
     fn default() -> Self {

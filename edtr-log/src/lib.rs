@@ -101,6 +101,6 @@ macro_rules! fatal {
         #[cfg(not(target_arch = "wasm32"))]
         log::error!(from = env!("CARGO_PKG_NAME"); "[FATAL] {}", format!($($args)+));
 
-        panic!()
+        panic!("fatal error occured (see log)")
     }};
 }

@@ -3,11 +3,16 @@
 	import { appWindow } from "@tauri-apps/api/window";
 	import { onMount } from "svelte";
 
+	import { setThemeColors } from "./utils/setThemeColors";
+
 	let loader: HTMLInputElement;
 
 	listen<number>("splash:progress", (e) => {
-		console.log(e.payload);
 		loader.value = e.payload.toString();
+	});
+
+	once("splash:themeLoaded", () => {
+		setThemeColors();
 	});
 
 	once("splash:loaded", () => {
@@ -18,7 +23,7 @@
 	onMount(() => emit("splash:visible"));
 </script>
 
-<div class="everything bg-blue-500">
+<div class="everything bg-primaryDark">
 	<div class="loading-text">
 		<span class="loading-text-words">L</span>
 		<span class="loading-text-words">O</span>

@@ -3,6 +3,7 @@ pub(crate) mod theme;
 #[cfg(not(debug_assertions))]
 use std::fs::{read, read_dir};
 
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::{fs, path::PathBuf};
 
@@ -15,26 +16,25 @@ use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
 
 use crate::config::{EDTRConfig, CONFIG_NAME};
+use crate::js_manage;
 #[cfg(not(debug_assertions))]
 use crate::APP_INFO;
-
-use self::theme::ThemeVersions;
 
 pub fn plugins_folder() -> PathBuf {
     #[cfg(not(debug_assertions))]
     return get_app_dir(AppDataType::SharedData, &APP_INFO, "plugins/").map_err(|e| {
-        edtr_log::error!("plugin dir does not exist! ({e})");
-
-        panic!();
+        edtr_log::fatal!("plugin dir does not exist! ({e})");
     });
 
+    // cwd in debug is `/src-tauri/`
     #[cfg(debug_assertions)]
     return "./plugins/".into();
 }
 
 #[derive(Serialize, Deserialize, Debug, TS)]
-#[ts(export)]
+#[ts(export, export_to = "../bindings/")]
 pub struct EDTRPlugins(Vec<PluginConfig>);
+js_manage!(crate::plugins::EDTRPlugins);
 
 impl EDTRPlugins {
     pub fn new() -> EDTRPlugins {
@@ -56,15 +56,14 @@ impl EDTRPlugins {
 
 #[non_exhaustive]
 #[derive(Debug, Serialize, Deserialize, TS)]
-#[serde(
-    rename_all(serialize = "lowercase", deserialize = "lowercase"),
-    tag = "type"
-)]
+#[serde(rename_all(serialize = "lowercase", deserialize = "lowercase"))]
+#[ts(export, export_to = "../bindings/", rename_all = "lowercase")]
 pub enum PluginType {
-    Theme { themes: ThemeVersions },
+    Theme { themes: HashMap<String, PathBuf> },
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../bindings/")]
 pub struct PluginConfig {
     name: String,
     description: Option<String>,
@@ -74,8 +73,6 @@ pub struct PluginConfig {
 
     uuid: Uuid,
 
-    //#[serde(rename = "type")]
-    #[serde(flatten)]
     r#type: PluginType,
 
     #[serde(skip)]
@@ -85,12 +82,11 @@ pub struct PluginConfig {
 pub async fn load_plugins(app: Arc<AppHandle>) {
     let app_cfg = app.state::<EDTRConfig>();
 
-    // cwd in debug is `/src-tauri/`
     let plugins = fs::read_dir(plugins_folder()).unwrap();
 
     let mut fplugins = EDTRPlugins::new();
 
-    edtr_log::debug!("found plugins: {plugins:?}");
+    edtr_log::debug!("found plugins");
 
     for plugin in plugins {
         match plugin {

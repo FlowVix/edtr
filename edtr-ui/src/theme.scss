@@ -1,0 +1,12 @@
+@mixin define-vars($vars...) {
+    :root {
+        @for $i from 0 to length($vars) {
+            --#{nth($vars, $i + 1)}: #000;
+        }
+    }
+}
+
+// Define theme vars here:
+@include define-vars(
+    primaryDark,
+)

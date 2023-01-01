@@ -34,10 +34,7 @@ pub const APP_INFO: AppInfo = AppInfo {
     author: "EDTR",
 };
 
-// #[tauri::command]
-// pub(crate) fn get_cli_args(args: State<CliArgs>) -> &CliArgs {
-//     args.inner()
-// }
+gen_handers!(EDTRTheme, EDTRConfig, EDTRPlugins);
 
 fn main() {
     #[cfg(target_os = "linux")]
@@ -48,7 +45,7 @@ fn main() {
         .info(Color::Green);
 
     tauri::Builder::default()
-        //.invoke_handler(tauri::generate_handler![get_cli_args])
+        .invoke_handler(Handlers::all)
         .setup(|app| {
             let app = Arc::new(app.app_handle());
 
@@ -159,15 +156,20 @@ async fn setup(app: Arc<AppHandle>) {
 
     load_theme(Arc::clone(&app)).await;
 
+    app.get_window("splash")
+        .unwrap()
+        .emit("splash:themeLoaded", 0)
+        .unwrap();
+
     println!(
         "current theme: {:?}",
         app.state::<plugins::theme::EDTRTheme>()
     );
 
-    app.get_window("splash")
-        .unwrap()
-        .emit("splash:loaded", 0.0)
-        .unwrap();
+    // app.get_window("splash")
+    //     .unwrap()
+    //     .emit("splash:loaded", 0.0)
+    //     .unwrap();
 
     app.get_window("edtr").unwrap().show().unwrap();
 }

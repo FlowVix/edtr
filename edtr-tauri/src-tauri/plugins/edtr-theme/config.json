@@ -5,8 +5,11 @@
     "version": "0.1.0",
     "author": "",
     "repository": "https://github.com/FlowVix/EDTR",
-    "type": "theme",
-    "themes": {
-        "edtr-dark": "./edtr-dark.json"
+    "type": {
+        "theme": {
+            "themes": {
+                "edtr-dark": "./edtr-dark.json"
+            }
+        }
     }
 }
